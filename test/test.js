@@ -50,7 +50,7 @@ let testIsClosed = function() {
 
 let sendQuery = function() {
 	return new Promise(function(resolve, reject) {
-		controller.get('Main.Model', function(error, data) {
+		controller.get('Main.Volume-', function(error, data) {
 			if (error) {
 				reject(error);
 			} else {
@@ -61,11 +61,37 @@ let sendQuery = function() {
 	})
 }
 
+let createQuery = function(command) {
+	return function() {
+		return new Promise(function(resolve, reject) {
+			controller.get(command, function(error, data) {
+				if (error) {
+					reject(error);
+				} else {
+					console.log('resolve ' + command + ': ', data);
+					resolve(data);
+				}
+			})
+		})		
+	}
+}
+
+let paralell = function(promises) {
+	return function() {
+		return Promise.all(promises.map((promise) => promise()));
+	}
+}
+
 let timeout = function() {
 	return new Promise(function(resolve, reject) {
 		setTimeout(resolve, 1000);
 	})
 }
+
+// open()
+// .then(paralell([createQuery('Main.Model?'), createQuery('Main.Source?')]))
+// .then((data) => console.log('end: ', data))
+// .catch((error) => console.log('ERROR: ', error));
 
 open()
 .then(testIsOpened)
@@ -73,20 +99,12 @@ open()
 .then(testIsClosed)
 .then(open)
 .then(testIsOpened)
-.then(sendQuery)
-.then((data) => console.log('success:', data))
-.catch((error) => console.log(error));
+.then(createQuery('Main.Model?'))
+.then(createQuery('Main.Source?'))
+.then(createQuery('Main.Source=Video'))
+.then(createQuery('Main.Source?'))
+.then(createQuery('Main.Source=Aux'))
+.then(createQuery('Main.Source?'))
+.then((data) => console.log('SUCCESS: ', data))
+.catch((error) => console.log('ERROR: ', error));
 
-/*if (controller.isOpen()) process.exit(1);
-console.log('opening /dev/ttyUSB0');
-controller.open();
-if (!controller.isOpen()) process.exit(1);
-controller.close();
-if (controller.isOpen()) process.exit(1);
-controller.open();
-*/
-
-// let model = controller.get('Main.Model?');
-
-//console.log('opening /dev/ttyUSB0fdfd');
-//var controller = new NadController('/dev/ttyUSB0fdfd').open();

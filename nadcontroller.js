@@ -21,15 +21,25 @@ module.exports = class NadController {
 		this.port.pipe(this.parser);
 		this.port.on('open', () => this.isPortOpen = true);
 		this.port.on('close', () => this.isPortOpen = false);
-		this.port.on('error', (error) => console.log('error:', error));
-		this.parser.on('data', (data) => console.log('data:', data));
+		// this.port.on('error', (error) => console.log('error:', error));
+		this.parser.on('data', (data) => {
+			if (this.activeCall) {
+				this.activeCall.consume(data);
+			}
+		});
   }
 
   open(callback) {
+  	if (this.isPortOpen) {
+  		callback('ERROR: port is already open');
+  	}
 		this.port.open(callback);
   }
 
   close(callback) {
+  	if (!this.isPortOpen) {
+  		callback('ERROR: port is already closed');
+  	}
   	this.port.close(callback);
   }
 
@@ -42,7 +52,11 @@ module.exports = class NadController {
   		callback('ERROR: port is closed');
   	}
 
-  	var shouldDrain = this.port.write('\r' + command + '?\r', 'UTF-8', (error) => {
+  	if (this.activeCall && !this.activeCall.isConsumed()) {
+  		callback('ERROR: port busy with command');
+  	}
+
+  	var shouldDrain = this.port.write('\r' + command + '\r', 'UTF-8', (error) => {
   		if (error) {
   			callaback(error);
   		}
@@ -56,8 +70,30 @@ module.exports = class NadController {
 	  		return;
   		});
   	}
-  	// wait for data to come back
- 		callback(null, 'dummy data');
+
+  	this.activeCall = new CallbackTimer(callback, 1000);
   }
 };
+
+class CallbackTimer {
+
+	constructor(callback, timeout) {
+		this.callback = callback;
+		this.consumed = false;
+		setTimeout(() => {
+			if (!this.consumed) {
+				this.callback('ERROR: timeout');
+			}
+		}, timeout);
+	}
+
+	isConsumed() {
+		return this.consumed;
+	}
+
+	consume(data) {
+		this.consumed = true;
+		this.callback(null, data);
+	}
+}
 
