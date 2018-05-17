@@ -10,5 +10,8 @@
   "dependencies": {
     "serialport": "6.2.0"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "jshintConfig": {
+    "esversion": 6
+  }
 }
