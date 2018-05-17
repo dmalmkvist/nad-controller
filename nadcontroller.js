@@ -99,14 +99,16 @@ class Command extends EventEmitter {
 
 module.exports = class NadController {
 
-  constructor(port, baudRate) {
+  constructor(portPath, options) {
+
+    let { baudRate } = options || {};
     if (!baudRate) {
       baudRate = DEFAULT_BAUD_RATE;
     }
 
     this.isPortOpen = false;
 
-    this.port = new SerialPort(port, {
+    this.port = new SerialPort(portPath, {
       'baudRate': baudRate,
       'autoOpen': false
     });
