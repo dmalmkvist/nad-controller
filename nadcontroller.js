@@ -4,28 +4,6 @@ const Readline = SerialPort.parsers.Readline;
 
 const DEFAULT_BAUD_RATE = 115200;
 
-// class CallbackTimer {
-
-//  constructor(callback, timeout) {
-//    this.callback = callback;
-//    this.consumed = false;
-//    setTimeout(() => {
-//      if (!this.consumed) {
-//        this.callback('ERROR: timeout');
-//      }
-//    }, timeout);
-//  }
-
-//  isConsumed() {
-//    return this.consumed;
-//  }
-
-//  consume(data) {
-//    this.consumed = true;
-//    this.callback(null, data);
-//  }
-// }
-
 /**
  * Manage commands sent over the serial port, making sure there
  * are never more then one outstanding command.
