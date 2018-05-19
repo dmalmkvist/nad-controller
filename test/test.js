@@ -88,24 +88,24 @@ let timeout = function() {
 	})
 }
 
-open()
-.then(paralell([createQuery('Main.Model?'), createQuery('Main.Source?')]))
-.then((data) => console.log('end: ', data))
-.catch((error) => console.log('ERROR: ', error));
-
 // open()
-// .then(testIsOpened)
-// .then(close)
-// .then(testIsClosed)
-// .then(open)
-// .then(testIsOpened)
-// .then(createQuery('Main.Model?'))
-// .then(createQuery('Main.Source?'))
-// .then(createQuery('Main.Model?'))
-// .then(createQuery('Main.Source=Video'))
-// .then(createQuery('Main.Source?'))
-// .then(createQuery('Main.Source=Aux'))
-// .then(createQuery('Main.Source?'))
-// .then((data) => console.log('SUCCESS: ', data))
+// .then(paralell([createQuery('Main.Model?'), createQuery('Main.Source?')]))
+// .then((data) => console.log('end: ', data))
 // .catch((error) => console.log('ERROR: ', error));
+
+open()
+.then(testIsOpened)
+.then(close)
+.then(testIsClosed)
+.then(open)
+.then(testIsOpened)
+.then(createQuery('Main.Model?'))
+.then(createQuery('Main.Source?'))
+.then(createQuery('Main.Model?'))
+.then(createQuery('Main.Source=Video'))
+.then(createQuery('Main.Source?'))
+.then(createQuery('Main.Source=Aux'))
+.then(createQuery('Main.Source?'))
+.then((data) => console.log('SUCCESS: ', data))
+.catch((error) => console.log('ERROR: ', error));
 

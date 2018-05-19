@@ -97,6 +97,18 @@ class Command extends EventEmitter {
   }
 }
 
+class PortGate {
+  constructor(port) {
+    this.open = false;
+    port.on('open', () => this.open = true);
+    port.on('close', () => this.open = false);
+  }
+
+  isOpen() {
+    return this.open;
+  }
+}
+
 module.exports = class NadController {
 
   constructor(portPath, options) {
@@ -106,8 +118,6 @@ module.exports = class NadController {
       baudRate = DEFAULT_BAUD_RATE;
     }
 
-    this.isPortOpen = false;
-
     this.port = new SerialPort(portPath, {
       'baudRate': baudRate,
       'autoOpen': false
@@ -115,31 +125,54 @@ module.exports = class NadController {
 
     this.parser = new Readline({ delimiter: '\r' });
     this.port.pipe(this.parser);
-    this.port.on('open', () => this.isPortOpen = true);
-    this.port.on('close', () => this.isPortOpen = false);
     this.commandManager = new CommandManager(this.port, this.parser);
+    this.portGate = new PortGate(this.port);
   }
 
   open(callback) {
-    if (this.isPortOpen) {
+    if (this.portGate.isOpen()) {
       callback('ERROR: port is already open');
     }
     this.port.open(callback);
   }
 
   close(callback) {
-    if (!this.isPortOpen) {
+    if (!this.portGate.isOpen()) {
       callback('ERROR: port is already closed');
     }
     this.port.close(callback);
   }
 
   isOpen() {
-    return this.isPortOpen;
+    return this.portGate.isOpen();
   }
 
   get(command, callback) {
-    if (!this.isOpen()) {
+    if (!this.portGate.isOpen()) {
+      callback('ERROR: port is closed');
+    }
+
+    this.commandManager.add(command, callback);
+  }
+
+  set(command, value, callback) {
+    if (!this.portGate.isOpen()) {
+      callback('ERROR: port is closed');
+    }
+
+    this.commandManager.add(command, callback);
+  }
+
+  increment(command, callback) {
+    if (!this.portGate.isOpen()) {
+      callback('ERROR: port is closed');
+    }
+
+    this.commandManager.add(command, callback);
+  }
+
+  decrement(command, callback) {
+    if (!this.portGate.isOpen()) {
       callback('ERROR: port is closed');
     }
 
