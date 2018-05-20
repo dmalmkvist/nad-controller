@@ -1,13 +1,13 @@
 
 const commands = [
-	{ 
+	{
 		'name': 'Main.Model',
 		'operators': [
 			'?'
 		],
 		'values': []
 	},
-	{ 
+	{
 		'name':	'Main.Mute',
 		'operators': [
 			'=',
@@ -20,7 +20,7 @@ const commands = [
 			'Off'
 		]
 	},
-	{ 
+	{
 		'name':'Main.Power',
 		'operators': [
 			'=',
@@ -51,7 +51,7 @@ const commands = [
 			'Tape2'
 		]
 	},
-	{ 
+	{
 		'name': 'Main.SpeakerA',
 		'operators': [
 			'=',
@@ -99,12 +99,3 @@ const commands = [
 		'values': []
 	}
 ];
-
-class Command {
-	constuctor(commandDefinition) {
-		{this.name, this.operators, this.values} = commandDefinition;
-		// this.name = commandDefinition.name;
-		// this.operators = commandDefinition
-	}
-}
-

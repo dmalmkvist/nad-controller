@@ -10,16 +10,24 @@ const DEFAULT_BAUD_RATE = 115200;
  */
 class CommandManager extends EventEmitter {
 
-  constructor(port, parser) {
+  constructor(portGate) {
     super();
-    this.port = port;
-    this.parser = parser;
+    this.portGate = portGate;
+
+    this.port = portGate.getPort();
+    this.parser = new Readline({ delimiter: '\r' });
+    this.port.pipe(this.parser);
+
     this.on('CommandAdded', this.runCommand);
     this.busy = false;
     this.commandQueue = [];
   }
 
   add(commandString, callback) {
+    if (!this.portGate.isOpen()) {
+      callback('ERROR: port is closed');
+    }
+
     let cmd = new Command(commandString, callback, this.port, this.parser);
     this.commandQueue.push(cmd);
     this.emit('CommandAdded');
@@ -98,14 +106,34 @@ class Command extends EventEmitter {
 }
 
 class PortGate {
+
   constructor(port) {
-    this.open = false;
-    port.on('open', () => this.open = true);
-    port.on('close', () => this.open = false);
+    this._isOpen = false;
+    this.port = port;
+    port.on('open', () => this._isOpen = true);
+    port.on('close', () => this._isOpen = false);
+  }
+
+  getPort() {
+    return this.port;
   }
 
   isOpen() {
-    return this.open;
+    return this._isOpen;
+  }
+
+  open(callback) {
+    if (this.isOpen()) {
+      callback('ERROR: port is already open');
+    }
+    this.port.open(callback);
+  }
+
+  close(callback) {
+    if (!this.isOpen()) {
+      callback('ERROR: port is already closed');
+    }
+    this.port.close(callback);
   }
 }
 
@@ -123,59 +151,35 @@ module.exports = class NadController {
       'autoOpen': false
     });
 
-    this.parser = new Readline({ delimiter: '\r' });
-    this.port.pipe(this.parser);
-    this.commandManager = new CommandManager(this.port, this.parser);
     this.portGate = new PortGate(this.port);
-  }
-
-  open(callback) {
-    if (this.portGate.isOpen()) {
-      callback('ERROR: port is already open');
-    }
-    this.port.open(callback);
-  }
-
-  close(callback) {
-    if (!this.portGate.isOpen()) {
-      callback('ERROR: port is already closed');
-    }
-    this.port.close(callback);
+    this.commandManager = new CommandManager(this.portGate);
   }
 
   isOpen() {
     return this.portGate.isOpen();
   }
 
-  get(command, callback) {
-    if (!this.portGate.isOpen()) {
-      callback('ERROR: port is closed');
-    }
+  open(callback) {
+    return this.portGate.open(callback);
+  }
 
+  close(callback) {
+    return this.portGate.close(callback);
+  }
+
+  get(command, callback) {
     this.commandManager.add(command, callback);
   }
 
   set(command, value, callback) {
-    if (!this.portGate.isOpen()) {
-      callback('ERROR: port is closed');
-    }
-
     this.commandManager.add(command, callback);
   }
 
   increment(command, callback) {
-    if (!this.portGate.isOpen()) {
-      callback('ERROR: port is closed');
-    }
-
     this.commandManager.add(command, callback);
   }
 
   decrement(command, callback) {
-    if (!this.portGate.isOpen()) {
-      callback('ERROR: port is closed');
-    }
-
     this.commandManager.add(command, callback);
   }
 };

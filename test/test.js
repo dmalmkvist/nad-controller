@@ -12,9 +12,9 @@ let open = function() {
 			else {
 				resolve();
 			}
-		})
-	})
-}
+		});
+	});
+};
 
 let close = function() {
 	return new Promise(function(resolve, reject) {
@@ -24,9 +24,9 @@ let close = function() {
 			} else {
 				resolve();
 			}
-		})
-	})
-}
+		});
+	});
+};
 
 let testIsOpened = function() {
 	return new Promise(function(resolve, reject) {
@@ -35,8 +35,8 @@ let testIsOpened = function() {
 		} else {
 			reject('Should be open');
 		}
-	})
-}
+	});
+};
 
 let testIsClosed = function() {
 	return new Promise(function(resolve, reject) {
@@ -45,8 +45,8 @@ let testIsClosed = function() {
 		} else {
 			reject('Should be closed');
 		}
-	})
-}
+	});
+};
 
 let sendQuery = function() {
 	return new Promise(function(resolve, reject) {
@@ -57,9 +57,9 @@ let sendQuery = function() {
 				console.log('resolve get:', data);
 				resolve(data);
 			}
-		})
-	})
-}
+		});
+	});
+};
 
 let createQuery = function(command) {
 	return function() {
@@ -71,22 +71,22 @@ let createQuery = function(command) {
 					console.log('resolve ' + command + ': ', data);
 					resolve(data);
 				}
-			})
-		})
-	}
-}
+			});
+		});
+	};
+};
 
 let paralell = function(promises) {
 	return function() {
 		return Promise.all(promises.map((promise) => promise()));
-	}
-}
+	};
+};
 
 let timeout = function() {
 	return new Promise(function(resolve, reject) {
 		setTimeout(resolve, 1000);
-	})
-}
+	});
+};
 
 // open()
 // .then(paralell([createQuery('Main.Model?'), createQuery('Main.Source?')]))
@@ -100,12 +100,13 @@ open()
 .then(open)
 .then(testIsOpened)
 .then(createQuery('Main.Model?'))
-.then(createQuery('Main.Source?'))
-.then(createQuery('Main.Model?'))
-.then(createQuery('Main.Source=Video'))
-.then(createQuery('Main.Source?'))
-.then(createQuery('Main.Source=Aux'))
-.then(createQuery('Main.Source?'))
+.then(createQuery('Main.Tape1=On'))
+// .then(createQuery('Main.Source?'))
+// .then(createQuery('Main.Model?'))
+// .then(createQuery('Main.Source=Video'))
+// .then(createQuery('Main.Source?'))
+// .then(createQuery('Main.Source=Aux'))
+// .then(createQuery('Main.Source?'))
 .then((data) => console.log('SUCCESS: ', data))
 .catch((error) => console.log('ERROR: ', error));
 
