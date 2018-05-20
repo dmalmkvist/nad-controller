@@ -1,4 +1,4 @@
-const NadController = require('../nadcontroller.js');
+const NadController = require('../src/nadcontroller');
 
 let controller = new NadController('/dev/ttyUSB0');
 
