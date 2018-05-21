@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "Library to send commands to NAD amplifiers over RS-232",
   "main": "nadcontroller.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "author": "Daniel Malmkvist",
   "dependencies": {
     "serialport": "6.2.0"
@@ -13,5 +10,11 @@
   "license": "ISC",
   "jshintConfig": {
     "esversion": 6
+  },
+  "devDependencies": {
+    "jest": "^22.4.4"
+  },
+  "scripts": {
+    "test": "jest"
   }
 }

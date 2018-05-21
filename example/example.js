@@ -1,4 +1,5 @@
 const NadController = require('../src/nadcontroller');
+const CommandParser = require('../src/command-parser');
 
 let controller = new NadController('/dev/ttyUSB0');
 
@@ -92,6 +93,8 @@ let timeout = function() {
 // .then(paralell([createQuery('Main.Model?'), createQuery('Main.Source?')]))
 // .then((data) => console.log('end: ', data))
 // .catch((error) => console.log('ERROR: ', error));
+
+console.log("Parse", CommandParser.parseCommand('Main.Power?'));
 
 open()
 .then(testIsOpened)
