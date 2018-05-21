@@ -1,9 +1,9 @@
 const EventEmitter = require('events');
 
 /**
- * Represent a command sent over the serial port
+ * Represent a command task sent over the serial port
  */
-module.exports = class Command extends EventEmitter {
+module.exports = class Task extends EventEmitter {
 
   constructor(command, callback, port, parser) {
     super();

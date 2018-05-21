@@ -1,5 +1,5 @@
 
-const commands = [
+[
 	{
 		'name': 'Main.Model',
 		'operators': [

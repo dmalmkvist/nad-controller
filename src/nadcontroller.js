@@ -3,9 +3,7 @@ const SerialPort = require('serialport');
 const Readline = SerialPort.parsers.Readline;
 
 const PortGate = require('./portgate');
-const CommandManager = require('./command-manager');
-
-
+const TaskManager = require('./task-manager');
 
 const DEFAULT_BAUD_RATE = 115200;
 
@@ -24,7 +22,7 @@ module.exports = class NadController {
     });
 
     this.portGate = new PortGate(this.port);
-    this.commandManager = new CommandManager(this.portGate);
+    this.taskManager = new TaskManager(this.portGate);
   }
 
   isOpen() {
@@ -40,20 +38,19 @@ module.exports = class NadController {
   }
 
   get(command, callback) {
-    this.commandManager.add(command, callback);
+    this.taskManager.add(command, callback);
   }
 
   set(command, value, callback) {
-    this.commandManager.add(command, callback);
+    this.taskManager.add(command, callback);
   }
 
   increment(command, callback) {
-    this.commandManager.add(command, callback);
+    this.taskManager.add(command, callback);
   }
 
   decrement(command, callback) {
-    this.commandManager.add(command, callback);
-  }
+    this.taskManager.add(command, callback); }
 };
 
 
