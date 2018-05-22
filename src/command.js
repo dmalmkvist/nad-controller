@@ -33,6 +33,11 @@ module.exports = class Command {
 		return this._value;
 	}
 
+	toString() {
+		return [this.name, this.operator, this.value]
+			.filter((value) => !!value)
+			.join('');
+	}
 	/*
 	 * Expects command as "Main.Power=Off" or "Main.Power?"
 	 * Returns a parsed command like:

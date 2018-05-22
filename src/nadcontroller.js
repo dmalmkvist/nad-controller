@@ -4,17 +4,22 @@ const Readline = SerialPort.parsers.Readline;
 
 const PortGate = require('./portgate');
 const TaskManager = require('./task-manager');
+const Command = require('./command');
+const CommandValidator = require('./command-validator');
 
 const DEFAULT_BAUD_RATE = 115200;
 
 module.exports = class NadController {
 
-  constructor(portPath, options) {
+  constructor(portPath, commandListFile, options) {
 
     let { baudRate } = options || {};
+
     if (!baudRate) {
       baudRate = DEFAULT_BAUD_RATE;
     }
+
+    this.commandValidator = CommandValidator.commandValidatorFromFile(commandListFile);
 
     this.port = new SerialPort(portPath, {
       'baudRate': baudRate,
@@ -38,19 +43,34 @@ module.exports = class NadController {
   }
 
   get(command, callback) {
+    let cmd = new Command(command, '?');
+    verifyCommand(cmd, commandValidator, callback);
     this.taskManager.add(command, callback);
   }
 
   set(command, value, callback) {
+    let cmd = new Command(command, '=', value);
+    verifyCommand(cmd, commandValidator, callback);
     this.taskManager.add(command, callback);
   }
 
   increment(command, callback) {
+    let cmd = new Command(command, '+');
+    verifyCommand(cmd, commandValidator, callback);
     this.taskManager.add(command, callback);
   }
 
   decrement(command, callback) {
-    this.taskManager.add(command, callback); }
+    let cmd = new Command(command, '-');
+    verifyCommand(cmd, commandValidator, callback);
+    this.taskManager.add(command, callback);
+  }
 };
+
+const verifyCommand = function(command, commandValidator, callback) {
+  if (!commandValidator.isValid(command)) {
+    callback('invalid command: ' + command.toString());
+  }
+}
 
 

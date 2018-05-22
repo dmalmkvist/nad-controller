@@ -30,3 +30,22 @@ test('Test Main.Mute-', () => {
 test('Test Mute.Main=Not', () => {
 	expect(commandValidator.isValid(new Command('Mute.Main', '=', 'Not'))).toBe(false);
 });
+
+test('Read commandList file', () => {
+	expect(CommandValidator.commandValidatorFromFile('config/nad-c355.json')).toBeInstanceOf(CommandValidator);
+})
+
+
+test('Read commandListFile, missing argument', () => {
+	function readCommandListFile() {
+		CommandValidator.commandValidatorFromFile();
+	}
+	expect(readCommandListFile).toThrowError('Must specify file');
+});
+
+test('Read commandListFile, missing file', () => {
+	function readCommandListFile() {
+		CommandValidator.commandValidatorFromFile('non-existing-file.json');
+	}
+	expect(readCommandListFile).toThrowError('File does not exist');
+});

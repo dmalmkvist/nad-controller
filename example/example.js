@@ -94,8 +94,6 @@ let timeout = function() {
 // .then((data) => console.log('end: ', data))
 // .catch((error) => console.log('ERROR: ', error));
 
-console.log("Parse", CommandParser.parseCommand('Main.Power?'));
-
 open()
 .then(testIsOpened)
 .then(close)

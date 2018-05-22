@@ -1,3 +1,4 @@
+const fs = require('fs');
 
 module.exports = class CommandValidator {
 
@@ -51,7 +52,7 @@ module.exports = class CommandValidator {
 
 		let operator = commandDescription.operators.find((operator) => {
 			return operator === command.operator;
-		})
+		});
 
 		if (!operator) {
 			return false;
@@ -59,12 +60,27 @@ module.exports = class CommandValidator {
 
 		let value = commandDescription.values.find((value) => {
 			return value === command.value;
-		})
+		});
 
 		if (!value) {
 			return false;
 		}
 
 		return true;
+	}
+
+	static commandValidatorFromFile(commandListFile) {
+
+		if (!commandListFile) {
+			throw 'Must specify file path argument.';
+		}
+
+		if (!fs.existsSync(commandListFile)) {
+			throw 'File does not exist: ' + commandListFile;
+		}
+
+		let fileContent = fs.readFileSync(commandListFile, 'utf8');
+		let json = JSON.parse(fileContent);
+		return new CommandValidator(json);
 	}
 };
