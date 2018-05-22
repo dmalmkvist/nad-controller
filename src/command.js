@@ -6,6 +6,14 @@
 module.exports = class Command {
 	constructor(name, operator, value) {
 
+		if (!name) {
+			throw 'Name is missing';
+		}
+
+		if (!operator) {
+			throw 'Operator is missing';
+		}
+
 		if (operator === '=' && !value) {
 			throw 'Value is missing for that operation.';
 		}
@@ -35,7 +43,7 @@ module.exports = class Command {
 
 	toString() {
 		return [this.name, this.operator, this.value]
-			.filter((value) => !!value)
+			.filter((v) => !!v)
 			.join('');
 	}
 	/*

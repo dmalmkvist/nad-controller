@@ -19,6 +19,10 @@ test('Test Main.Mute=On', () => {
 	expect(commandValidator.isValid(new Command('Main.Mute', '=', 'On'))).toBe(true);
 });
 
+test('Test Main.Mute?', () => {
+	expect(commandValidator.isValid(new Command('Main.Mute', '?'))).toBe(true);
+});
+
 test('Test Mute.Main=On', () => {
 	expect(commandValidator.isValid(new Command('Mute.Main', '=', 'On'))).toBe(false);
 });

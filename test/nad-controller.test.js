@@ -5,6 +5,8 @@ const PortGate = require('../src/portgate');
 const TaskManager = require('../src/task-manager');
 const Command = require('../src/command');
 
+jest.mock('serialport');
+
 const mockTaskManagerAdd = jest.fn();
 jest.mock('../src/task-manager', () => {
   return jest.fn().mockImplementation(() => {

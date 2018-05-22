@@ -1,7 +1,6 @@
-const NadController = require('../src/nadcontroller');
-const CommandParser = require('../src/command-parser');
+const NadController = require('../src/nad-controller');
 
-let controller = new NadController('/dev/ttyUSB0');
+let controller = new NadController('/dev/ttyUSB0', '../config/nad-c355.json');
 
 
 let open = function() {
@@ -49,27 +48,14 @@ let testIsClosed = function() {
 	});
 };
 
-let sendQuery = function() {
-	return new Promise(function(resolve, reject) {
-		controller.get('Main.Volume-', function(error, data) {
-			if (error) {
-				reject(error);
-			} else {
-				console.log('resolve get:', data);
-				resolve(data);
-			}
-		});
-	});
-};
-
-let createQuery = function(command) {
+let createRead = function(command) {
 	return function() {
 		return new Promise(function(resolve, reject) {
 			controller.get(command, function(error, data) {
 				if (error) {
 					reject(error);
 				} else {
-					console.log('resolve ' + command + ': ', data);
+					console.log('Read ' + command + ': ', data);
 					resolve(data);
 				}
 			});
@@ -77,22 +63,50 @@ let createQuery = function(command) {
 	};
 };
 
-let paralell = function(promises) {
+let createWrite = function(command, value) {
 	return function() {
-		return Promise.all(promises.map((promise) => promise()));
+		return new Promise(function(resolve, reject) {
+			controller.set(command, value, function(error, data) {
+				if (error) {
+					reject(error);
+				} else {
+					console.log('Write ' + command + ': ', data);
+					resolve(data);
+				}
+			});
+		});
 	};
 };
 
-let timeout = function() {
-	return new Promise(function(resolve, reject) {
-		setTimeout(resolve, 1000);
-	});
+let createIncrement = function(command) {
+	return function() {
+		return new Promise(function(resolve, reject) {
+			controller.increment(command, function(error, data) {
+				if (error) {
+					reject(error);
+				} else {
+					console.log('Increment ' + command + ': ', data);
+					resolve(data);
+				}
+			});
+		});
+	};
 };
 
-// open()
-// .then(paralell([createQuery('Main.Model?'), createQuery('Main.Source?')]))
-// .then((data) => console.log('end: ', data))
-// .catch((error) => console.log('ERROR: ', error));
+let createDecrement = function(command) {
+	return function() {
+		return new Promise(function(resolve, reject) {
+			controller.decrement(command, function(error, data) {
+				if (error) {
+					reject(error);
+				} else {
+					console.log('Decrement ' + command + ': ', data);
+					resolve(data);
+				}
+			});
+		});
+	};
+};
 
 open()
 .then(testIsOpened)
@@ -100,14 +114,17 @@ open()
 .then(testIsClosed)
 .then(open)
 .then(testIsOpened)
-.then(createQuery('Main.Model?'))
-.then(createQuery('Main.Tape1=On'))
-// .then(createQuery('Main.Source?'))
-// .then(createQuery('Main.Model?'))
-// .then(createQuery('Main.Source=Video'))
-// .then(createQuery('Main.Source?'))
-// .then(createQuery('Main.Source=Aux'))
-// .then(createQuery('Main.Source?'))
+.then(createRead('Main.Model'))
+.then(createRead('Main.Source'))
+.then(createWrite('Main.Source', 'Video'))
+.then(createRead('Main.Source'))
+.then(createWrite('Main.Source', 'Aux'))
+.then(createRead('Main.Source'))
+.then(createRead('Main.SpeakerA'))
+.then(createIncrement('Main.SpeakerA'))
+.then(createRead('Main.SpeakerA'))
+.then(createDecrement('Main.SpeakerA'))
+.then(createRead('Main.SpeakerA'))
 .then((data) => console.log('SUCCESS: ', data))
 .catch((error) => console.log('ERROR: ', error));
 

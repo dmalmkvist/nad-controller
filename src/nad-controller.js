@@ -43,25 +43,25 @@ module.exports = class NadController {
   get(command, callback) {
     let cmd = new Command(command, '?');
     verifyCommand(cmd, this.commandValidator, callback);
-    this.taskManager.add(command, callback);
+    this.taskManager.add(cmd, callback);
   }
 
   set(command, value, callback) {
     let cmd = new Command(command, '=', value);
     verifyCommand(cmd, this.commandValidator, callback);
-    this.taskManager.add(command, callback);
+    this.taskManager.add(cmd, callback);
   }
 
   increment(command, callback) {
     let cmd = new Command(command, '+');
     verifyCommand(cmd, this.commandValidator, callback);
-    this.taskManager.add(command, callback);
+    this.taskManager.add(cmd, callback);
   }
 
   decrement(command, callback) {
     let cmd = new Command(command, '-');
     verifyCommand(cmd, this.commandValidator, callback);
-    this.taskManager.add(command, callback);
+    this.taskManager.add(cmd, callback);
   }
 };
 

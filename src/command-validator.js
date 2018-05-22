@@ -47,6 +47,7 @@ module.exports = class CommandValidator {
 		});
 
 		if (!commandDescription) {
+			console.log('missing command description');
 			return false;
 		}
 
@@ -55,6 +56,7 @@ module.exports = class CommandValidator {
 		});
 
 		if (!operator) {
+			console.log('missing operator');
 			return false;
 		}
 
@@ -62,7 +64,8 @@ module.exports = class CommandValidator {
 			return value === command.value;
 		});
 
-		if (!value) {
+		if (operator === '=' && !value) {
+			console.log('expected value');
 			return false;
 		}
 
