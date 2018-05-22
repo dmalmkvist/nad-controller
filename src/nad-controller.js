@@ -1,4 +1,3 @@
-const EventEmitter = require('events');
 const SerialPort = require('serialport');
 const Readline = SerialPort.parsers.Readline;
 
@@ -14,7 +13,6 @@ module.exports = class NadController {
   constructor(portPath, commandListFile, options) {
 
     let { baudRate } = options || {};
-
     if (!baudRate) {
       baudRate = DEFAULT_BAUD_RATE;
     }
@@ -44,33 +42,31 @@ module.exports = class NadController {
 
   get(command, callback) {
     let cmd = new Command(command, '?');
-    verifyCommand(cmd, commandValidator, callback);
+    verifyCommand(cmd, this.commandValidator, callback);
     this.taskManager.add(command, callback);
   }
 
   set(command, value, callback) {
     let cmd = new Command(command, '=', value);
-    verifyCommand(cmd, commandValidator, callback);
+    verifyCommand(cmd, this.commandValidator, callback);
     this.taskManager.add(command, callback);
   }
 
   increment(command, callback) {
     let cmd = new Command(command, '+');
-    verifyCommand(cmd, commandValidator, callback);
+    verifyCommand(cmd, this.commandValidator, callback);
     this.taskManager.add(command, callback);
   }
 
   decrement(command, callback) {
     let cmd = new Command(command, '-');
-    verifyCommand(cmd, commandValidator, callback);
+    verifyCommand(cmd, this.commandValidator, callback);
     this.taskManager.add(command, callback);
   }
 };
 
 const verifyCommand = function(command, commandValidator, callback) {
   if (!commandValidator.isValid(command)) {
-    callback('invalid command: ' + command.toString());
+    throw 'Invalid command: ' + command.toString();
   }
-}
-
-
+};

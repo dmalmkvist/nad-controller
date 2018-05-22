@@ -25,7 +25,7 @@ module.exports = class Task extends EventEmitter {
   onTimeout() {
     if (!this.isDone) {
       this.isDone = true;
-      this.callback('Timout: command: ' + this.command);
+      this.callback('Timout: command: ' + this.command.toString());
       this.emit('done');
     }
   }
@@ -41,7 +41,7 @@ module.exports = class Task extends EventEmitter {
   execute() {
 
     this.parser.once('data', this.onData.bind(this));
-    var shouldDrain = this.port.write('\r' + this.command + '\r', 'UTF-8', this.onError.bind(this));
+    var shouldDrain = this.port.write('\r' + this.command.toString() + '\r', 'UTF-8', this.onError.bind(this));
 
     if (shouldDrain) {
       this.port.drain(this.onError.bind(this));

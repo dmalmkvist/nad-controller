@@ -22,12 +22,12 @@ module.exports = class TaskManager extends EventEmitter {
     this.taskQueue = [];
   }
 
-  add(commandString, callback) {
+  add(command, callback) {
     if (!this.portGate.isOpen()) {
       callback('ERROR: port is closed');
     }
 
-    let cmd = new Task(commandString, callback, this.port, this.parser);
+    let cmd = new Task(command, callback, this.port, this.parser);
     this.taskQueue.push(cmd);
     this.emit('TaskAdded');
   }
