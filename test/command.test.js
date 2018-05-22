@@ -50,3 +50,11 @@ test('Parse Main.Power+ ', () => {
 	}
 	expect(parseCommand).toThrowError('Value is not allowed');
 });
+
+test('Command.toString() Main.Power=On', () => {
+	expect(new Command('Main.Power', '=', 'On').toString()).toEqual('Main.Power=On');
+})
+
+test('Command.toString() Main.Power?', () => {
+	expect(new Command('Main.Power', '?').toString()).toEqual('Main.Power?');
+})
