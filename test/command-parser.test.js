@@ -1,66 +1,52 @@
-const CommandParser = require('../src/command-parser');
+const Command = require('../src/command');
 
 test('Parse Main.Power=On', () => {
-	expect(CommandParser.parseCommand('Main.Power=On')).toEqual({
-		'name': 'Main.Power',
-		'operator': '=',
-		'value': 'On'
-	});
+	expect(Command.parseCommand('Main.Power=On')).toEqual(new Command('Main.Power', '=', 'On'));
 });
 
 test('Parse Main.Power?', () => {
-	expect(CommandParser.parseCommand('Main.Power?')).toEqual({
-		'name': 'Main.Power',
-		'operator': '?'
-	});
+	expect(Command.parseCommand('Main.Power?')).toEqual(new Command('Main.Power', '?'));
 });
 
 test('Parse Main.Power-', () => {
-	expect(CommandParser.parseCommand('Main.Power-')).toEqual({
-		'name': 'Main.Power',
-		'operator': '-'
-	});
+	expect(Command.parseCommand('Main.Power-')).toEqual(new Command('Main.Power', '-'));
 });
 
 test('Parse Main.Power+', () => {
-	expect(CommandParser.parseCommand('Main.Power+')).toEqual({
-		'name': 'Main.Power',
-		'operator': '+'
-	});
+	expect(Command.parseCommand('Main.Power+')).toEqual(new Command('Main.Power', '+'));
 });
 
 test('Parse Main.Power', () => {
 	function parseCommand() {
-		CommandParser.parseCommand('Main.Power');
+		Command.parseCommand('Main.Power');
 	}
 	expect(parseCommand).toThrowError('Missing operation');
 });
 
-
 test('Parse Main.Power=', () => {
 	function parseCommand() {
-		CommandParser.parseCommand('Main.Power=');
+		Command.parseCommand('Main.Power=');
 	}
 	expect(parseCommand).toThrowError('Value is missing');
 });
 
 test('Parse Main.Power?On', () => {
 	function parseCommand() {
-		CommandParser.parseCommand('Main.Power?On');
+		Command.parseCommand('Main.Power?On');
 	}
 	expect(parseCommand).toThrowError('Value is not allowed');
 });
 
 test('Parse Main.Power-On', () => {
 	function parseCommand() {
-		CommandParser.parseCommand('Main.Power-On');
+		Command.parseCommand('Main.Power-On');
 	}
 	expect(parseCommand).toThrowError('Value is not allowed');
 });
 
 test('Parse Main.Power+ ', () => {
 	function parseCommand() {
-		CommandParser.parseCommand('Main.Power+ ');
+		Command.parseCommand('Main.Power+ ');
 	}
 	expect(parseCommand).toThrowError('Value is not allowed');
 });
