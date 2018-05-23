@@ -16,10 +16,21 @@ module.exports = class TaskManager extends EventEmitter {
     this.port = portGate.getPort();
     this.parser = new Readline({ delimiter: '\r' });
     this.port.pipe(this.parser);
+    this.parser.on('data', this.onData.bind(this));
 
     this.on('TaskAdded', this.runTask);
     this.busy = false;
     this.taskQueue = [];
+  }
+
+  onData(data) {
+    let command = Command.parseCommand(data);
+    let serialTrigger = this.busy? true : false;
+    this.emit('change', {
+      'name': command.name,
+      'value': command.value,
+      'serialTrigger': serialTrigger
+    });
   }
 
   add(command, callback) {
@@ -29,7 +40,7 @@ module.exports = class TaskManager extends EventEmitter {
 
     let cmd = new Task(command, callback, this.port, this.parser);
     this.taskQueue.push(cmd);
-    this.emit('TaskAdded');
+    this.emit('TaskAdded', cmd);
   }
 
   runTask() {

@@ -1,3 +1,4 @@
+const EventEmitter = require('events');
 const SerialPort = require('serialport');
 const Readline = SerialPort.parsers.Readline;
 
@@ -8,9 +9,10 @@ const CommandValidator = require('./command-validator');
 
 const DEFAULT_BAUD_RATE = 115200;
 
-module.exports = class NadController {
+module.exports = class NadController extends EventEmitter {
 
   constructor(portPath, commandListFile, options) {
+    super();
 
     let { baudRate } = options || {};
     if (!baudRate) {
@@ -26,6 +28,7 @@ module.exports = class NadController {
 
     this.portGate = new PortGate(this.port);
     this.taskManager = new TaskManager(this.portGate);
+    this.taskManager.on('change', onStateChange.bind(this));
   }
 
   isOpen() {
@@ -63,6 +66,11 @@ module.exports = class NadController {
     verifyCommand(cmd, this.commandValidator, callback);
     this.taskManager.add(cmd, callback);
   }
+};
+
+const onStateChange = function(data) {
+  console.log('change: ', data);
+  this.emit('change', data);
 };
 
 const verifyCommand = function(command, commandValidator, callback) {
