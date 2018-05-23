@@ -1,5 +1,5 @@
 const EventEmitter = require('events');
-const Command = require('command');
+const Command = require('./command');
 
 /**
  * Represent a command task sent over the serial port
