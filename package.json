@@ -2,7 +2,16 @@
   "name": "nad-controller",
   "version": "1.0.0",
   "description": "Library to send commands to NAD amplifiers over RS-232",
-  "main": "nadcontroller.js",
+  "homepage": "https://github.com/dmalmkvist/nad-controller",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/dmalmkvist/nad-controller"
+  },
+  "keywords": [
+    "NAD",
+    "RS-232"
+  ],
+  "main": "nad-controller.js",
   "author": "Daniel Malmkvist",
   "dependencies": {
     "serialport": "6.2.0"
