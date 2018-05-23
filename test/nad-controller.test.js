@@ -10,7 +10,10 @@ jest.mock('serialport');
 const mockTaskManagerAdd = jest.fn();
 jest.mock('../src/task-manager', () => {
   return jest.fn().mockImplementation(() => {
-    return {add: mockTaskManagerAdd};
+    return {
+      add: mockTaskManagerAdd,
+      on: jest.fn()
+    };
   });
 });
 

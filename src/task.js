@@ -1,4 +1,5 @@
 const EventEmitter = require('events');
+const Command = require('./command');
 
 /**
  * Represent a command task sent over the serial port
@@ -17,7 +18,11 @@ module.exports = class Task extends EventEmitter {
   onData(data) {
     if (!this.isDone) {
       this.isDone = true;
-      this.callback(null, data);
+      let command = Command.parseCommand(data);
+      this.callback(null, {
+        'name': command.name,
+        'value': command.value
+      });
       this.emit('done');
     }
   }
@@ -25,7 +30,7 @@ module.exports = class Task extends EventEmitter {
   onTimeout() {
     if (!this.isDone) {
       this.isDone = true;
-      this.callback('Timout: command: ' + this.command.toString());
+      this.callback('Timout: command');
       this.emit('done');
     }
   }
