@@ -2,6 +2,7 @@ const Task = require('./task');
 const EventEmitter = require('events');
 const SerialPort = require('serialport');
 const Readline = SerialPort.parsers.Readline;
+const Command = require('./command');
 
 /**
  * Manage tasks sent over the serial port, making sure there
