@@ -28,7 +28,7 @@ module.exports = class NadController extends EventEmitter {
 
     this.portGate = new PortGate(this.port);
     this.taskManager = new TaskManager(this.portGate);
-    this.taskManager.on('change', onStateChange.bind(this));
+    this.taskManager.on('data', onData.bind(this));
   }
 
   isOpen() {
@@ -68,9 +68,8 @@ module.exports = class NadController extends EventEmitter {
   }
 };
 
-const onStateChange = function(data) {
-  console.log('change: ', data);
-  this.emit('change', data);
+const onData = function(data) {
+  this.emit('data', data);
 };
 
 const verifyCommand = function(command, commandValidator, callback) {

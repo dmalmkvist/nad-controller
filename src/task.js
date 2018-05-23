@@ -20,8 +20,8 @@ module.exports = class Task extends EventEmitter {
       this.isDone = true;
       let command = Command.parseCommand(data);
       this.callback(null, {
-        'name': data.name,
-        'value': data.value
+        'name': command.name,
+        'value': command.value
       });
       this.emit('done');
     }
@@ -30,7 +30,7 @@ module.exports = class Task extends EventEmitter {
   onTimeout() {
     if (!this.isDone) {
       this.isDone = true;
-      this.callback('Timout: command: ' + this.command.toString());
+      this.callback('Timout: command');
       this.emit('done');
     }
   }

@@ -26,11 +26,11 @@ module.exports = class TaskManager extends EventEmitter {
 
   onData(data) {
     let command = Command.parseCommand(data);
-    let serialTrigger = this.busy? true : false;
+    let physicalTrigger = this.busy? false : true;
     this.emit('change', {
       'name': command.name,
       'value': command.value,
-      'serialTrigger': serialTrigger
+      'physicalTrigger': physicalTrigger
     });
   }
 
