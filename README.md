@@ -1,10 +1,11 @@
 # nad-controller
-Some NAD amplifier has a RS-232 port on the back that accepts commands and emits changes when any of the physical buttons are pressed. This library makes it a little easier to work with it.
+Some NAD amplifiers has a RS-232 port on the back that offers functionallity to control the amplifiers behaiviour.
+
+Some NAD amplifier has a RS-232 port on the back that accepts commands and emits changes when any of the physical buttons are pressed. These amplifiers has a number of properties that can be read and some properties can also be changed. Different amplifier models can have different properties. This library aims to makes it a little easier to work with it.
 
 Nad amplifiers offeres a number of properties that can be read and some properties can also be changed. Different amplifier models can have different properties.
 
 ## Functionality
-- Validation that the commands exists and are correct for a specific model.
 - Queueing of commands. The serial port only accepts one command at a time, and if commands are sent too frequent some command will be ignored.
 - Distinguishing if events are triggered by physical pressing buttons or if they are triggered by a serial port command.
 
