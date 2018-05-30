@@ -2,21 +2,37 @@ const EventEmitter = require('events');
 const SerialPort = require('serialport');
 const Readline = SerialPort.parsers.Readline;
 
-const PortGate = require('./portgate');
-const TaskManager = require('./task-manager');
-const Command = require('./command');
-const CommandValidator = require('./command-validator');
+const PortGate = require('./src/portgate');
+const TaskManager = require('./src/task-manager');
+const Command = require('./src/command');
+const CommandValidator = require('./src/command-validator');
 
 const DEFAULT_BAUD_RATE = 115200;
 
+const MODELS_CONFIG = Object.freeze({
+  C355: '../config/nad-c355.json'
+});
+
 module.exports = class NadController extends EventEmitter {
 
-  constructor(portPath, commandListFile, options) {
+  static get MODELS() {
+    return MODELS_CONFIG;
+  }
+
+  constructor(portPath, options) {
     super();
 
-    let { baudRate } = options || {};
+    let { baudRate, commandListFile, model } = options || {};
     if (!baudRate) {
       baudRate = DEFAULT_BAUD_RATE;
+    }
+
+    if (!commandListFile && model) {
+      commandListFile = model;
+    }
+
+    if (!commandListFile) {
+      throw 'Missing model configuration file';
     }
 
     this.commandValidator = CommandValidator.commandValidatorFromFile(commandListFile);
@@ -65,6 +81,11 @@ module.exports = class NadController extends EventEmitter {
     let cmd = new Command(command, '-');
     verifyCommand(cmd, this.commandValidator, callback);
     this.taskManager.add(cmd, callback);
+  }
+
+  getAll(callback) {
+    // TODO get all commands with ?
+    // query and collect
   }
 };
 

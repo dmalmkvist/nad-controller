@@ -1,4 +1,4 @@
-const NadController = require('../src/nad-controller');
+const NadController = require('../index');
 
 const SerialPort = require('serialport');
 const PortGate = require('../src/portgate');
@@ -29,10 +29,12 @@ beforeEach(() => {
   mockCommandValidatorIsValid.mockClear();
 });
 
-const nadController = new NadController('/path/to/serial-port', 'path-to-command-list-file');
+const nadController = new NadController('/path/to/serial-port', {
+  model: NadController.MODELS.C355
+});
 
 test('Creating NadController', () => {
-  expect(new NadController('/path/to/serial-port', 'path-to-command-list-file')).toBeInstanceOf(NadController);
+  expect(new NadController('/path/to/serial-port', { model: NadController.MODELS.C355 })).toBeInstanceOf(NadController);
 });
 
 test('Invalid read command', () => {

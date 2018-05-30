@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 module.exports = class CommandValidator {
 
@@ -75,7 +76,10 @@ module.exports = class CommandValidator {
 			throw 'Must specify file path argument.';
 		}
 
-		if (!fs.existsSync(commandListFile)) {
+		let moduleLocalPath = path.join(__dirname, commandListFile);
+		if (fs.existsSync(moduleLocalPath)) {
+			commandListFile = moduleLocalPath;
+		} else if (!fs.existsSync(commandListFile)) {
 			throw 'File does not exist: ' + commandListFile;
 		}
 
