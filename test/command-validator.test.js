@@ -12,6 +12,14 @@ let commandValidator = new CommandValidator([
 				'On',
 				'Off'
 			]
+		},
+		{
+			'name':	'Main.Volume',
+			'operators': [
+				'-',
+				'+'
+			],
+			'values': []
 		}
 	]);
 
@@ -37,8 +45,11 @@ test('Test Mute.Main=Not', () => {
 
 test('Read commandList file', () => {
 	expect(CommandValidator.commandValidatorFromFile('config/nad-c355.json')).toBeInstanceOf(CommandValidator);
-})
+});
 
+test('Get read commands', () => {
+	expect(commandValidator.getReadCommands()).toEqual(['Main.Mute']);
+});
 
 test('Read commandListFile, missing argument', () => {
 	function readCommandListFile() {

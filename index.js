@@ -35,65 +35,86 @@ module.exports = class NadController extends EventEmitter {
       throw 'Missing model configuration file';
     }
 
-    this.commandValidator = CommandValidator.commandValidatorFromFile(commandListFile);
+    this._commandValidator = CommandValidator.commandValidatorFromFile(commandListFile);
 
-    this.port = new SerialPort(portPath, {
+    this._port = new SerialPort(portPath, {
       'baudRate': baudRate,
       'autoOpen': false
     });
 
-    this.portGate = new PortGate(this.port);
-    this.taskManager = new TaskManager(this.portGate);
-    this.taskManager.on('data', onData.bind(this));
+    this._portGate = new PortGate(this._port);
+    this._taskManager = new TaskManager(this._portGate);
+    this._taskManager.on('data', onData.bind(this));
   }
 
   isOpen() {
-    return this.portGate.isOpen();
+    return this._portGate.isOpen();
   }
 
   open(callback) {
-    return this.portGate.open(callback);
+    return this._portGate.open(callback);
   }
 
   close(callback) {
-    return this.portGate.close(callback);
+    return this._portGate.close(callback);
   }
 
   get(command, callback) {
     let cmd = new Command(command, '?');
-    verifyCommand(cmd, this.commandValidator, callback);
-    this.taskManager.add(cmd, callback);
+    verifyCommand(cmd, this._commandValidator);
+    this._taskManager.add(cmd, callback);
   }
 
   set(command, value, callback) {
     let cmd = new Command(command, '=', value);
-    verifyCommand(cmd, this.commandValidator, callback);
-    this.taskManager.add(cmd, callback);
+    verifyCommand(cmd, this._commandValidator);
+    this._taskManager.add(cmd, callback);
   }
 
   increment(command, callback) {
     let cmd = new Command(command, '+');
-    verifyCommand(cmd, this.commandValidator, callback);
-    this.taskManager.add(cmd, callback);
+    verifyCommand(cmd, this._commandValidator);
+    this._taskManager.add(cmd, callback);
   }
 
   decrement(command, callback) {
     let cmd = new Command(command, '-');
-    verifyCommand(cmd, this.commandValidator, callback);
-    this.taskManager.add(cmd, callback);
+    verifyCommand(cmd, this._commandValidator);
+    this._taskManager.add(cmd, callback);
   }
 
-  getAll(callback) {
-    // TODO get all commands with ?
-    // query and collect
+  getAllStates(callback) {
+
+    let scopedRead = readPromise.bind(this);
+    let readPromises = this._commandValidator.getReadCommands()
+      .map((command) => {
+        return new Promise(function(resolve, reject) {
+          scopedRead(command, resolve, reject);
+        })
+      });
+
+    Promise.all(readPromises)
+      .then((values) => callback(null, values))
+      .catch((error) => callback(error));
   }
 };
+
+const readPromise = function(command, resolve, reject) {
+
+  this.get(command, (error, data) => {
+    if (error) {
+      reject(error);
+    } else {
+      resolve(data);
+    }
+  });
+}
 
 const onData = function(data) {
   this.emit('data', data);
 };
 
-const verifyCommand = function(command, commandValidator, callback) {
+const verifyCommand = function(command, commandValidator) {
   if (!commandValidator.isValid(command)) {
     throw 'Invalid command: ' + command.toString();
   }

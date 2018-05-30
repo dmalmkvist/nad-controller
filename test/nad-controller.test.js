@@ -18,10 +18,12 @@ jest.mock('../src/task-manager', () => {
 });
 
 const mockCommandValidatorIsValid = jest.fn();
+const mockGetReadCommands = jest.fn();
 const CommandValidator = require.requireActual('../src/command-validator');
 CommandValidator.commandValidatorFromFile = jest.fn(() => {
   return {
-    isValid: mockCommandValidatorIsValid
+    isValid: mockCommandValidatorIsValid,
+    getReadCommands: mockGetReadCommands
   };
 });
 
@@ -78,4 +80,31 @@ test('Read command', (done) => {
   }
 
   nadController.get('<some command>', callback);
+});
+
+test('getAllStates', (done) => {
+  mockCommandValidatorIsValid.mockReturnValue(true);
+  mockTaskManagerAdd.mockImplementationOnce((cmd, cb) => cb(null, {name: 'alpha', value: 'foo'}));
+  mockTaskManagerAdd.mockImplementationOnce((cmd, cb) => cb(null, {name: 'beta', value: 'bar'}));
+  mockGetReadCommands.mockReturnValue(['alpha', 'beta']);
+  function callback(error, data) {
+    expect(data).toEqual([{name: 'alpha', value: 'foo'}, {name: 'beta', value: 'bar'}]);
+    done();
+  }
+
+  nadController.getAllStates(callback);
+});
+
+test('getAllStates wiht error', (done) => {
+  mockCommandValidatorIsValid.mockReturnValue(true);
+  mockTaskManagerAdd.mockImplementationOnce((cmd, cb) => cb(null, {name: 'alpha', value: 'foo'}));
+  mockTaskManagerAdd.mockImplementationOnce((cmd, cb) => cb('error'));
+  mockGetReadCommands.mockReturnValue(['alpha', 'beta']);
+  function callback(error, data) {
+    expect(error).toEqual('error');
+    expect(data).toBe(undefined);
+    done();
+  }
+
+  nadController.getAllStates(callback);
 });
