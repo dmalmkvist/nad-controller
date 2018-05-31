@@ -13,7 +13,7 @@ const MODELS_CONFIG = Object.freeze({
   C355: '../config/nad-c355.json'
 });
 
-module.exports = class NadController extends EventEmitter {
+class NadController extends EventEmitter {
 
   static get MODELS() {
     return MODELS_CONFIG;
@@ -86,6 +86,7 @@ module.exports = class NadController extends EventEmitter {
   getAllStates(callback) {
 
     let scopedRead = readPromise.bind(this);
+
     let readPromises = this._commandValidator.getReadCommands()
       .map((command) => {
         return new Promise(function(resolve, reject) {
@@ -119,3 +120,6 @@ const verifyCommand = function(command, commandValidator) {
     throw 'Invalid command: ' + command.toString();
   }
 };
+
+module.exports.NadController = NadController;
+module.exports.MODELS = MODELS_CONFIG;

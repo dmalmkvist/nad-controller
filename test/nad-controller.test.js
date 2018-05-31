@@ -1,4 +1,5 @@
-const NadController = require('../index');
+const NadController = require('../index').NadController;
+const MODELS = require('../index').MODELS;
 
 const SerialPort = require('serialport');
 const PortGate = require('../src/portgate');
@@ -32,7 +33,7 @@ beforeEach(() => {
 });
 
 const nadController = new NadController('/path/to/serial-port', {
-  model: NadController.MODELS.C355
+  model: MODELS.C355
 });
 
 test('Creating NadController', () => {
