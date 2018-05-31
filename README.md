@@ -7,9 +7,10 @@ Some NAD amplifiers has an RS-232 port on the back that offers functionality to 
 
 ## Example
 ```javascript
-const NadController = require('nad-controller');
+const NadController = require('nad-controller').NadController;
+const MODELS = require('nad-controller').MODELS;
 
-let controller = new NadController('/dev/ttyUSB0', '../config/nad-c355.json');
+let controller = new NadController('/dev/ttyUSB0', { model: MODELS.C355 });
 controller.open((error) => {
 
   controller.set('Main.Power', 'On', (error, data) => {

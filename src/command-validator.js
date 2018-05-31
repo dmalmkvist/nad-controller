@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 
 module.exports = class CommandValidator {
 
@@ -32,9 +33,9 @@ module.exports = class CommandValidator {
 	 *		]
 	 *	},
 	 */
-	constructor(availableCommand) {
+	constructor(_availableCommands) {
 
-		this.availableCommand = availableCommand;
+		this._availableCommands = _availableCommands;
 	}
 
 	/*
@@ -42,7 +43,7 @@ module.exports = class CommandValidator {
 	 */
 	isValid(command) {
 
-		let commandDescription = this.availableCommand.find((commandDescription) => {
+		let commandDescription = this._availableCommands.find((commandDescription) => {
 			return commandDescription.name === command.name;
 		});
 
@@ -69,13 +70,22 @@ module.exports = class CommandValidator {
 		return true;
 	}
 
+	getReadCommands() {
+		return this._availableCommands
+			.filter((command) => command.operators.indexOf('?') >= 0)
+			.map((command) => command.name);
+	}
+
 	static commandValidatorFromFile(commandListFile) {
 
 		if (!commandListFile) {
 			throw 'Must specify file path argument.';
 		}
 
-		if (!fs.existsSync(commandListFile)) {
+		let moduleLocalPath = path.join(__dirname, commandListFile);
+		if (fs.existsSync(moduleLocalPath)) {
+			commandListFile = moduleLocalPath;
+		} else if (!fs.existsSync(commandListFile)) {
 			throw 'File does not exist: ' + commandListFile;
 		}
 
