@@ -18,14 +18,14 @@ module.exports = class PortGate {
 
   open(callback) {
     if (this.isOpen()) {
-      callback('ERROR: port is already open');
+      callback('port is already open');
     }
     this.port.open(callback);
   }
 
   close(callback) {
     if (!this.isOpen()) {
-      callback('ERROR: port is already closed');
+      callback('port is already closed');
     }
     this.port.close(callback);
   }

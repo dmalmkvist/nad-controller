@@ -48,7 +48,7 @@ class NadController extends EventEmitter {
 
     this._portGate = new PortGate(this._port);
     this._taskManager = new TaskManager(this._portGate);
-    this._taskManager.on('data', onData.bind(this));
+    this._taskManager.on('update', onData.bind(this));
   }
 
   isOpen() {
@@ -116,7 +116,7 @@ const readPromise = function(command, resolve, reject) {
 }
 
 const onData = function(data) {
-  this.emit('data', data);
+  this.emit('update', data);
 };
 
 const verifyCommand = function(command, commandValidator) {

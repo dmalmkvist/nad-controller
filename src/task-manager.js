@@ -27,7 +27,7 @@ module.exports = class TaskManager extends EventEmitter {
   onData(data) {
     let command = Command.parseCommand(data);
     let physicalTrigger = this.busy? false : true;
-    this.emit('change', {
+    this.emit('update', {
       'name': command.name,
       'value': command.value,
       'physicalTrigger': physicalTrigger
@@ -36,7 +36,7 @@ module.exports = class TaskManager extends EventEmitter {
 
   add(command, callback) {
     if (!this.portGate.isOpen()) {
-      callback('ERROR: port is closed');
+      callback('port is closed');
     }
 
     let cmd = new Task(command, callback, this.port, this.parser);
