@@ -42,6 +42,10 @@ class NadController extends EventEmitter {
       'autoOpen': false
     });
 
+    this._port.on('error', (error) => {
+      this.emit('error', 'SerialPort error: ' + error);
+    });
+
     this._portGate = new PortGate(this._port);
     this._taskManager = new TaskManager(this._portGate);
     this._taskManager.on('data', onData.bind(this));

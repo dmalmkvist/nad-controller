@@ -1,6 +1,6 @@
-const NadController = require('../src/nad-controller');
+const NadController = require('../index').NadController;
 
-let controller = new NadController('/dev/ttyUSB0', '../config/nad-c355.json');
+let controller = new NadController('/dev/ttyUSB0', { commandListFile: '../config/nad-c355.json'});
 
 
 let open = function() {
