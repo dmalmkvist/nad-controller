@@ -1,6 +1,6 @@
 {
   "name": "nad-controller",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Library to send commands to NAD amplifiers over RS-232",
   "homepage": "https://github.com/dmalmkvist/nad-controller",
   "repository": {
